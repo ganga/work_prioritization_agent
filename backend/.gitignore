@@ -1,1 +1,14 @@
 **.pyc
+class Extractor:
+
+    def extract(self, source, connector):
+        """
+        source    → 'slack', 'email', 'jira'
+        connector → SlackConnector / EmailConnector / JiraConnector
+        """
+
+        if source == "slack":
+            data = connector.get_messages("")
+            return self.format_slack_data(data)
+
+        # later you will add email, jira here

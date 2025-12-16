@@ -12,3 +12,17 @@ class Extractor:
             return self.format_slack_data(data)
 
         # later you will add email, jira here
+
+    def format_slack_data(self, data):
+        unified_list = []
+
+        for msg in data.get("messages", []):
+            unified_list.append({
+                "source": "slack",
+                "text": msg.get("text"),
+                "timestamp": msg.get("ts"),
+                "deadline": None,
+                "sender": msg.get("user")
+            })
+
+        return unified_list

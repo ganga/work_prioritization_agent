@@ -1,28 +1,30 @@
 **.pyc
-class Extractor:
+import requests
 
-    def extract(self, source, connector):
-        """
-        source    → 'slack', 'email', 'jira'
-        connector → SlackConnector / EmailConnector / JiraConnector
-        """
+class SlackConnector:
+    def __init__(self, token):
+        self.token = token
+        self.base_url = "https://slack.com/api/"
+        self.headers = {
+            "Authorization": f"Bearer {self.token}"
+        }
 
-        if source == "slack":
-            data = connector.get_messages("")
-            return self.format_slack_data(data)
+    # Fetch messages from a channel
+    def get_messages(self, channel_id, limit=20):
+        url = self.base_url + "conversations.history"
+        params = {
+            "channel": channel_id,
+            "limit": limit
+        }
+        response = requests.get(url, headers=self.headers, params=params)
+        return response.json()
 
-        # later you will add email, jira here
-
-    def format_slack_data(self, data):
-        unified_list = []
-
-        for msg in data.get("messages", []):
-            unified_list.append({
-                "source": "slack",
-                "text": msg.get("text"),
-                "timestamp": msg.get("ts"),
-                "deadline": None,
-                "sender": msg.get("user")
-            })
-
-        return unified_list
+    # Fetch mentions of a user
+    def get_mentions(self, username, limit=20):
+        url = self.base_url + "search.messages"
+        params = {
+            "query": f"@{username}",
+            "count": limit
+        }
+        response = requests.get(url, headers=self.headers, params=params)
+        return response.json()
